@@ -13,6 +13,9 @@
         android:theme="@style/Theme.ERental"
         tools:targetApi="31">
         <activity
+            android:name=".login.login"
+            android:exported="false" />
+        <activity
             android:name=".login.halaman3"
             android:exported="false" />
         <activity
