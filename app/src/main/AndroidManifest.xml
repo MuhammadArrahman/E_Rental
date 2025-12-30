@@ -13,6 +13,9 @@
         android:theme="@style/Theme.ERental"
         tools:targetApi="31">
         <activity
+            android:name=".register.forgot"
+            android:exported="false" />
+        <activity
             android:name=".register.register"
             android:exported="false" />
         <activity
