@@ -13,6 +13,9 @@
         android:theme="@style/Theme.ERental"
         tools:targetApi="31">
         <activity
+            android:name=".login.signIn"
+            android:exported="false" />
+        <activity
             android:name=".admin.dashboard_admin"
             android:exported="false" />
         <activity

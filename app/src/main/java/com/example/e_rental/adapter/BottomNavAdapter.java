@@ -1,5 +1,6 @@
 package com.example.e_rental.adapter;
 
+import android.graphics.Color; // Import baru untuk warna
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class BottomNavAdapter extends RecyclerView.Adapter<BottomNavAdapter.NavViewHolder> {
 
-    private List<bottom_nav> navItems;  // ← Perbaikan: gunakan bottom_nav bukan BottomNavAdapter
+    private List<bottom_nav> navItems;
     private OnItemClickListener listener;
 
     // Interface untuk handle click event
@@ -21,7 +22,7 @@ public class BottomNavAdapter extends RecyclerView.Adapter<BottomNavAdapter.NavV
     }
 
     // Constructor
-    public BottomNavAdapter(List<bottom_nav> navItems, OnItemClickListener listener) {  // ← Perbaikan
+    public BottomNavAdapter(List<bottom_nav> navItems, OnItemClickListener listener) {
         this.navItems = navItems;
         this.listener = listener;
     }
@@ -29,7 +30,7 @@ public class BottomNavAdapter extends RecyclerView.Adapter<BottomNavAdapter.NavV
     @NonNull
     @Override
     public NavViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate layout item_bottom_nav.xml
+        // Inflate layout item_bottom_nav.xml yang baru saja kamu buat
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_bottom_nav, parent, false);
         return new NavViewHolder(view);
@@ -38,10 +39,14 @@ public class BottomNavAdapter extends RecyclerView.Adapter<BottomNavAdapter.NavV
     @Override
     public void onBindViewHolder(@NonNull NavViewHolder holder, int position) {
         // Ambil data dari list berdasarkan posisi
-        bottom_nav item = navItems.get(position);  // ← Perbaikan: deklarasi variabel dengan benar
+        bottom_nav item = navItems.get(position);
 
         // Set icon ke ImageView
         holder.ivNavIcon.setImageResource(item.getIconResId());
+
+        // --- TAMBAHAN BARU: Mengubah warna icon menjadi putih secara programmatik ---
+        holder.ivNavIcon.setColorFilter(Color.WHITE);
+        // -------------------------------------------------------------------------
 
         // Handle click event
         holder.itemView.setOnClickListener(v -> {
@@ -53,17 +58,14 @@ public class BottomNavAdapter extends RecyclerView.Adapter<BottomNavAdapter.NavV
 
     @Override
     public int getItemCount() {
-        // Return jumlah item dalam list
         return navItems.size();
     }
 
-    // ViewHolder class untuk menyimpan reference view
     static class NavViewHolder extends RecyclerView.ViewHolder {
         ImageView ivNavIcon;
 
         public NavViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Inisialisasi ImageView dari layout
             ivNavIcon = itemView.findViewById(R.id.ivNavIcon);
         }
     }
