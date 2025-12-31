@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "298554175446",
+    "project_id": "erental-c329e",
+    "storage_bucket": "erental-c329e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:298554175446:android:01e604d2c676717b91fe77",
+        "android_client_info": {
+          "package_name": "com.example.e_rental"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOvGnJFSFa8BXRhA_OcYNlB9nDcovFwSA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
