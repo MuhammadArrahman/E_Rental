@@ -3,16 +3,16 @@ package com.example.e_rental.register;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.browser.customtabs.CustomTabsIntent;
 
+import com.example.e_rental.MainActivity;
 import com.example.e_rental.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -22,7 +22,9 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -36,7 +38,20 @@ public class register extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private GoogleSignInClient mGoogleSignInClient;
+
+    // =========================
+    // GOOGLE SIGN IN
+    // =========================
+    private GoogleSignInClient googleSignInClient;
+    private static final int RC_GOOGLE_SIGN_IN = 9001;
+
+    // =========================
+    // OAUTH CONFIG
+    // =========================
+    private static final String TAG = "RegisterOAuth";
+    private static final String REDIRECT_URI = "erental://auth";
+    private static final String FACEBOOK_APP_ID = "YOUR_FACEBOOK_APP_ID";
+    private static final String GITHUB_CLIENT_ID = "YOUR_GITHUB_CLIENT_ID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,22 +61,16 @@ public class register extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // 1. Konfigurasi Google Sign-In
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id)) // ID ini otomatis ada setelah connect Firebase
-                .requestEmail()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        // Inisialisasi UI
         initUI();
+        configureGoogleSignIn();
 
-        // Logika Tombol Social Media
-        googleLogin.setOnClickListener(v -> openGooglePicker());
-        facebookLogin.setOnClickListener(v -> openCustomTab("https://www.facebook.com/login"));
-        githubLogin.setOnClickListener(v -> openCustomTab("https://github.com/login"));
-
-        btnSignUp.setOnClickListener(v -> registerUser());
+        // =========================
+        // CLICK LISTENER
+        // =========================
+        btnSignUp.setOnClickListener(v -> attemptRegistration());
+        googleLogin.setOnClickListener(v -> signInWithGoogle());
+        facebookLogin.setOnClickListener(v -> signInWithFacebookCustomTabs());
+        githubLogin.setOnClickListener(v -> signInWithGithubCustomTabs());
     }
 
     private void initUI() {
@@ -75,62 +84,177 @@ public class register extends AppCompatActivity {
         githubLogin = findViewById(R.id.githubLogin);
     }
 
-    // --- LOGIKA GOOGLE SIGN IN ---
-    private void openGooglePicker() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        googleLauncher.launch(signInIntent);
+    // =========================
+    // GOOGLE SIGN IN
+    // =========================
+    private void configureGoogleSignIn() {
+        GoogleSignInOptions gso =
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(getString(R.string.default_web_client_id))
+                        .requestEmail()
+                        .build();
+
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
-    private final ActivityResultLauncher<Intent> googleLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
-                    try {
-                        GoogleSignInAccount account = task.getResult(ApiException.class);
-                        firebaseAuthWithGoogle(account.getIdToken());
-                    } catch (ApiException e) {
-                        Toast.makeText(this, "Google Sign In Gagal", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-    );
+    private void signInWithGoogle() {
+        Intent intent = googleSignInClient.getSignInIntent();
+        startActivityForResult(intent, RC_GOOGLE_SIGN_IN);
+    }
 
-    private void firebaseAuthWithGoogle(String idToken) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_GOOGLE_SIGN_IN) {
+            Task<GoogleSignInAccount> task =
+                    GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                handleGoogleSignInResult(account.getIdToken());
+            } catch (ApiException e) {
+                Toast.makeText(this,
+                        "Google Sign In gagal",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void handleGoogleSignInResult(String idToken) {
+        AuthCredential credential =
+                GoogleAuthProvider.getCredential(idToken, null);
+
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        String uid = mAuth.getCurrentUser().getUid();
-                        String email = mAuth.getCurrentUser().getEmail();
-                        // Simpan ke Firestore jika user baru
-                        saveUserData(uid, email, "Belum diatur");
+                        FirebaseUser user = mAuth.getCurrentUser();
+
+                        if (task.getResult()
+                                .getAdditionalUserInfo()
+                                .isNewUser()) {
+                            saveUserToFirestore(user.getUid(), user.getEmail());
+                        }
+
+                        Toast.makeText(this,
+                                "Login Google berhasil",
+                                Toast.LENGTH_LONG).show();
+
+                        startActivity(new Intent(this, MainActivity.class));
+                        finish();
+
+                    } else {
+                        Toast.makeText(this,
+                                "Login Google gagal",
+                                Toast.LENGTH_LONG).show();
                     }
                 });
     }
 
-    // --- LOGIKA CUSTOM TABS (Facebook & GitHub) ---
+    // =========================
+    // FACEBOOK CUSTOM TABS
+    // =========================
+    private void signInWithFacebookCustomTabs() {
+        String url =
+                "https://www.facebook.com/v18.0/dialog/oauth"
+                        + "?client_id=" + FACEBOOK_APP_ID
+                        + "&redirect_uri=" + REDIRECT_URI
+                        + "&response_type=code"
+                        + "&scope=email,public_profile";
+
+        openCustomTab(url);
+    }
+
+    // =========================
+    // GITHUB CUSTOM TABS
+    // =========================
+    private void signInWithGithubCustomTabs() {
+        String url =
+                "https://github.com/login/oauth/authorize"
+                        + "?client_id=" + GITHUB_CLIENT_ID
+                        + "&redirect_uri=" + REDIRECT_URI
+                        + "&scope=user:email";
+
+        openCustomTab(url);
+    }
+
     private void openCustomTab(String url) {
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        // Mengatur warna toolbar agar sesuai dengan tema aplikasi (Biru)
-        builder.setToolbarColor(getResources().getColor(R.color.primary_blue));
-        CustomTabsIntent customTabsIntent = builder.build();
-        customTabsIntent.launchUrl(this, Uri.parse(url));
+        try {
+            CustomTabsIntent customTabsIntent =
+                    new CustomTabsIntent.Builder().build();
+            customTabsIntent.launchUrl(this, Uri.parse(url));
+        } catch (Exception e) {
+            Log.e(TAG, "Custom Tabs gagal", e);
+            Toast.makeText(this,
+                    "Gagal membuka browser",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
-    // --- LOGIKA REGISTER MANUAL (Email/Pass) ---
-    private void registerUser() {
-        // ... (Kode register Anda yang sebelumnya tetap sama) ...
+    // =========================
+    // REGISTER MANUAL EMAIL
+    // =========================
+    private void attemptRegistration() {
+        String email = etEmail.getText().toString().trim();
+        String pass = etPassword.getText().toString().trim();
+        String confirm = etConfirmPassword.getText().toString().trim();
+
+        if (email.isEmpty() || pass.isEmpty() || confirm.isEmpty()) {
+            Toast.makeText(this,
+                    "Semua field wajib diisi",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!pass.equals(confirm)) {
+            Toast.makeText(this,
+                    "Password tidak sama",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (pass.length() < 6) {
+            Toast.makeText(this,
+                    "Password minimal 6 karakter",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        mAuth.createUserWithEmailAndPassword(email, pass)
+                .addOnSuccessListener(authResult -> {
+                    saveUserToFirestore(
+                            authResult.getUser().getUid(),
+                            authResult.getUser().getEmail()
+                    );
+
+                    Toast.makeText(this,
+                            "Registrasi berhasil",
+                            Toast.LENGTH_LONG).show();
+
+                    startActivity(new Intent(this, MainActivity.class));
+                    finish();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this,
+                                e.getMessage(),
+                                Toast.LENGTH_LONG).show());
     }
 
-    private void saveUserData(String uid, String email, String phone) {
-        Map<String, Object> userMap = new HashMap<>();
-        userMap.put("uid", uid);
-        userMap.put("email", email);
-        userMap.put("phone", phone);
-        userMap.put("role", "user");
+    // =========================
+    // FIRESTORE SAVE USER
+    // =========================
+    private void saveUserToFirestore(String uid, String email) {
+        Map<String, Object> user = new HashMap<>();
+        user.put("email", email);
+        user.put("role", "user");
+        user.put("isVerified", true);
+        user.put("createdAt", FieldValue.serverTimestamp());
 
-        db.collection("users").document(uid).set(userMap)
-                .addOnSuccessListener(aVoid -> finish());
+        db.collection("users")
+                .document(uid)
+                .set(user)
+                .addOnSuccessListener(aVoid ->
+                        Log.d(TAG, "User berhasil disimpan ke Firestore"))
+                .addOnFailureListener(e ->
+                        Log.e(TAG, "Gagal simpan user", e));
     }
 }
