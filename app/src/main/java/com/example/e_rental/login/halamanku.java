@@ -6,18 +6,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.e_rental.R;
 import androidx.appcompat.widget.AppCompatButton;
 
-public class halaman3 extends AppCompatActivity {
+public class halamanku extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.halaman3); // Sesuaikan nama XML halaman 3
+        setContentView(R.layout.halamanku); // Pastikan ini nama XML halaman 1 Anda
 
         AppCompatButton btnNext = findViewById(R.id.btnNext);
         btnNext.setOnClickListener(v -> {
-            // Setelah intro selesai, pindah ke halaman Login
-            startActivity(new Intent(halaman3.this, signIn.class));
-            finish(); // Agar user tidak bisa kembali ke intro saat menekan tombol back
+            Intent intent = new Intent(halamanku.this, halaman2.class);
+            startActivity(intent);
         });
     }
 }

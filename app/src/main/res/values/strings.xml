@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">E- Rental</string>
+
+    <string name="default_web_client_id">project-298554175446</string>
+
+    <string name="facebook_app_id">1374817811002886</string>
+    <string name="fb_login_protocol_scheme">fb1374817811002886</string>
+    <string name="facebook_client_token">1374817811002886</string>
+
+    <string name="github_client_id">Ov23lizSA6CSVi7WadDs</string>
 </resources>
