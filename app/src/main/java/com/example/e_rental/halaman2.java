@@ -1,4 +1,4 @@
-package com.example.e_rental.login;
+package com.example.e_rental;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,18 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.e_rental.R;
 import androidx.appcompat.widget.AppCompatButton;
 
-public class halaman3 extends AppCompatActivity {
+public class halaman2 extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.halaman3); // Sesuaikan nama XML halaman 3
+        setContentView(R.layout.halaman2); // Sesuaikan nama XML halaman 2
 
         AppCompatButton btnNext = findViewById(R.id.btnNext);
         btnNext.setOnClickListener(v -> {
-            // Setelah intro selesai, pindah ke halaman Login
-            startActivity(new Intent(halaman3.this, signIn.class));
-            finish(); // Agar user tidak bisa kembali ke intro saat menekan tombol back
+            startActivity(new Intent(halaman2.this, halaman3.class));
         });
     }
 }

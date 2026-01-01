@@ -1,4 +1,4 @@
-package com.example.e_rental.login;
+package com.example.e_rental;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -11,8 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.browser.customtabs.CustomTabsIntent;
-import com.example.e_rental.MainActivity;
-import com.example.e_rental.R;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.AuthCredential;

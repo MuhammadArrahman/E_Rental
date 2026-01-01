@@ -1,6 +1,4 @@
 package com.example.e_rental;
-
-
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 

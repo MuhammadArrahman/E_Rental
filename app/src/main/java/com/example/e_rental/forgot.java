@@ -1,4 +1,4 @@
-package com.example.e_rental.login;
+package com.example.e_rental;
 
 import android.content.Intent;
 import android.os.Bundle;
