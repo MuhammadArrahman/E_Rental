@@ -8,18 +8,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.browser.customtabs.CustomTabsIntent;
-
 import com.example.e_rental.MainActivity;
 import com.example.e_rental.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -27,7 +24,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
-public class SignIn extends AppCompatActivity {
+
+public class sign_in extends AppCompatActivity {
 
     private EditText emailInput, passwordInput;
     private AppCompatButton loginButton;
@@ -66,8 +64,8 @@ public class SignIn extends AppCompatActivity {
         loginButton.setOnClickListener(v -> loginWithEmail());
 
         // Link forgot & register
-        forgotPassword.setOnClickListener(v -> startActivity(new Intent(SignIn.this, forgot.class)));
-        signUpLink.setOnClickListener(v -> startActivity(new Intent(SignIn.this, register.class)));
+        forgotPassword.setOnClickListener(v -> startActivity(new Intent(sign_in.this, forgot.class)));
+        signUpLink.setOnClickListener(v -> startActivity(new Intent(sign_in.this, register.class)));
 
         // Social login
         googleLogin.setOnClickListener(v -> signInWithGoogle());
@@ -88,10 +86,10 @@ public class SignIn extends AppCompatActivity {
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = mAuth.getCurrentUser();
                     if (user != null && user.isEmailVerified()) {
-                        startActivity(new Intent(SignIn.this, MainActivity.class));
+                        startActivity(new Intent(sign_in.this, MainActivity.class));
                         finish();
                     } else {
-                        Toast.makeText(SignIn.this, "Harap verifikasi email terlebih dahulu", Toast.LENGTH_LONG).show();
+                        Toast.makeText(sign_in.this, "Harap verifikasi email terlebih dahulu", Toast.LENGTH_LONG).show();
                         mAuth.signOut();
                     }
                 })
@@ -116,14 +114,14 @@ public class SignIn extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(SignIn.this, "Login dengan Google Berhasil!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(SignIn.this, MainActivity.class);
+                        Toast.makeText(sign_in.this, "Login dengan Google Berhasil!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(sign_in.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
                     } else {
                         Log.w(TAG, "Google Auth failed", task.getException());
-                        Toast.makeText(SignIn.this, "Login Google gagal", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(sign_in.this, "Login Google gagal", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -178,4 +176,5 @@ public class SignIn extends AppCompatActivity {
             Toast.makeText(this, "Gagal membuka GitHub", Toast.LENGTH_SHORT).show();
         }
     }
+
 }

@@ -23,7 +23,7 @@ public class forgot extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.forgot); // pastikan nama XML benar
+        setContentView(R.layout.forgot);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -31,13 +31,13 @@ public class forgot extends AppCompatActivity {
         btnSendLink = findViewById(R.id.btnSendLink);
         ivBack = findViewById(R.id.ivBack);
 
-        // Tombol back
+        // Back ke login
         ivBack.setOnClickListener(v -> {
-            startActivity(new Intent(forgot.this, signIn.class));
+            startActivity(new Intent(forgot.this, sign_in.class));
             finish();
         });
 
-        // Tombol kirim link
+        // Send reset link
         btnSendLink.setOnClickListener(v -> sendResetLink());
     }
 
@@ -56,14 +56,9 @@ public class forgot extends AppCompatActivity {
                     btnSendLink.setEnabled(true);
 
                     if (task.isSuccessful()) {
-                        Toast.makeText(this,
-                                "Link reset password telah dikirim ke email",
-                                Toast.LENGTH_LONG).show();
 
-                        Intent intent = new Intent(
-                                forgot.this,
-                                openEmail.class
-                        );
+                        // Pindah ke halaman Open Email
+                        Intent intent = new Intent(forgot.this, openEmail.class);
                         intent.putExtra("RESET_EMAIL", email);
                         startActivity(intent);
                         finish();

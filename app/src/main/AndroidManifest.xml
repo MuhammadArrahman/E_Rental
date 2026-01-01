@@ -9,38 +9,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ERental">
-
+        <activity
+            android:name=".login.sign_in"
+            android:exported="false" />
         <activity
             android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- MAIN / BERANDA -->
+        </activity> <!-- MAIN / BERANDA -->
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
-
-        <!-- LOGIN / INTRO -->
+            android:exported="false" /> <!-- LOGIN / INTRO -->
         <activity
             android:name=".login.halamanku"
             android:exported="false" />
-
         <activity
             android:name=".login.halaman2"
             android:exported="false" />
-
         <activity
             android:name=".login.halaman3"
             android:exported="false" />
-
         <activity
             android:name=".login.signIn"
             android:exported="false" />
-
     </application>
 
 </manifest>
