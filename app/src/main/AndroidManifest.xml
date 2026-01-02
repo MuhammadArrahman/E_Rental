@@ -9,33 +9,60 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ERental">
-        <activity
-            android:name=".login.sign_in"
-            android:exported="false" />
+
+        <!-- ===================== -->
+        <!-- SPLASH (LAUNCHER) -->
+        <!-- ===================== -->
         <activity
             android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- MAIN / BERANDA -->
+        </activity>
+
+        <!-- ===================== -->
+        <!-- LOGIN / INTRO -->
+        <!-- ===================== -->
+        <activity
+            android:name=".halamanku"
+            android:exported="false" />
+
+        <activity
+            android:name=".sign_in"
+            android:exported="false" />
+
+        <activity
+            android:name=".register"
+            android:exported="false" />
+
+        <activity
+            android:name=".forgot"
+            android:exported="false" />
+
+        <!-- ===================== -->
+        <!-- HALAMAN USER -->
+        <!-- ===================== -->
         <activity
             android:name=".MainActivity"
-            android:exported="false" /> <!-- LOGIN / INTRO -->
-        <activity
-            android:name=".login.halamanku"
             android:exported="false" />
+
         <activity
-            android:name=".login.halaman2"
+            android:name=".halaman2"
             android:exported="false" />
+
         <activity
-            android:name=".login.halaman3"
+            android:name=".halaman3"
             android:exported="false" />
+
+        <!-- ===================== -->
+        <!-- UTIL -->
+        <!-- ===================== -->
         <activity
-            android:name=".login.signIn"
+            android:name=".openEmail"
             android:exported="false" />
+
     </application>
 
 </manifest>
