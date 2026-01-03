@@ -64,7 +64,7 @@ public class sign_in extends AppCompatActivity {
 
         // Link forgot & register
         forgotPassword.setOnClickListener(v -> startActivity(new Intent(sign_in.this, forgot.class)));
-        signUpLink.setOnClickListener(v -> startActivity(new Intent(sign_in.this, register.class)));
+        signUpLink.setOnClickListener(v -> startActivity(new Intent(sign_in.this, RegisterActivity.class)));
 
         // Social login
         googleLogin.setOnClickListener(v -> signInWithGoogle());

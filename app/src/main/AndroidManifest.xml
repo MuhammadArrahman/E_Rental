@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.e_rental">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,9 +12,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ERental">
 
-        <!-- ===================== -->
-        <!-- SPLASH (LAUNCHER) -->
-        <!-- ===================== -->
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="@string/facebook_client_token" />
+
         <activity
             android:name=".SplashActivity"
             android:exported="true">
@@ -22,46 +29,14 @@
             </intent-filter>
         </activity>
 
-        <!-- ===================== -->
-        <!-- LOGIN / INTRO -->
-        <!-- ===================== -->
-        <activity
-            android:name=".halamanku"
-            android:exported="false" />
-
-        <activity
-            android:name=".sign_in"
-            android:exported="false" />
-
-        <activity
-            android:name=".register"
-            android:exported="false" />
-
-        <activity
-            android:name=".forgot"
-            android:exported="false" />
-
-        <!-- ===================== -->
-        <!-- HALAMAN USER -->
-        <!-- ===================== -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".halaman2"
-            android:exported="false" />
-
-        <activity
-            android:name=".halaman3"
-            android:exported="false" />
-
-        <!-- ===================== -->
-        <!-- UTIL -->
-        <!-- ===================== -->
-        <activity
-            android:name=".openEmail"
-            android:exported="false" />
+        <activity android:name=".RegisterActivity" android:exported="false" />
+        <activity android:name=".sign_in" android:exported="false" />
+        <activity android:name=".forgot" android:exported="false" />
+        <activity android:name=".openEmail" android:exported="false" />
+        <activity android:name=".halamanku" android:exported="false" />
+        <activity android:name=".halaman2" android:exported="false" />
+        <activity android:name=".halaman3" android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="false" />
 
     </application>
 
